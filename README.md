@@ -1,11 +1,11 @@
-# @rific/react-native-resizable-input
+# @rific/resizable-input
 
 Auto-growing, drag-resizable multiline text input for React Native. Automatically uses `react-native-paper`'s `TextInput` if installed, otherwise falls back to the built-in React Native `TextInput`.
 
 ## Installation
 
 ```sh
-npm install @rific/react-native-resizable-input react-native-gesture-handler react-native-reanimated
+npm install @rific/resizable-input react-native-gesture-handler react-native-reanimated
 ```
 
 With react-native-paper (optional):
@@ -17,7 +17,7 @@ npm install react-native-paper
 ## Usage
 
 ```tsx
-import { ResizableInput } from '@rific/react-native-resizable-input'
+import { ResizableInput } from '@rific/resizable-input'
 
 // Auto-grows as you type; drag the handle to resize manually
 <ResizableInput
