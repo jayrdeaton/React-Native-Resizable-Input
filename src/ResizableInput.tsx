@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { ComponentProps, ComponentType, forwardRef, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { ComponentProps, ComponentType, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { LayoutChangeEvent, StyleSheet, TextInput as RNTextInput, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { runOnJS, useSharedValue } from 'react-native-reanimated'
@@ -9,30 +9,27 @@ try {
   AutoPaperTextInput = require('react-native-paper').TextInput
 } catch {}
 
-export type ResizableInputProps = {
+export type ResizableInputProps<T extends ComponentType<any> = typeof RNTextInput> = {
   autoGrow?: boolean
   handleColor?: string
   initialHeight?: number
   maxHeight?: number
   minHeight?: number
-  mode?: 'flat' | 'outlined'
   onChangeText?: (text: string | null) => void
   onHeightChange?: (height: number) => void
   renderHandle?: () => ReactNode
   resizable?: boolean
-  TextInputComponent?: ComponentType<any>
+  TextInputComponent?: T
   value?: string | null
-} & Omit<ComponentProps<typeof RNTextInput>, 'onChangeText' | 'value'>
+} & Omit<ComponentProps<T>, 'onChangeText' | 'value'>
 
 const clampHeight = (value: number, minHeight: number, maxHeight: number) => Math.max(minHeight, Math.min(maxHeight, value))
 const AUTO_GROW_DELTA = 2
 
-export const ResizableInput = forwardRef<RNTextInput, ResizableInputProps>((props, ref) => {
-  const { autoGrow = true, handleColor = '#9e9e9e', initialHeight, maxHeight, minHeight, mode, numberOfLines, onChangeText, onContentSizeChange, onHeightChange, renderHandle, resizable = true, style, TextInputComponent, value: valueProp, ...rest } = props
+function ResizableInputInner<T extends ComponentType<any> = typeof RNTextInput>(props: ResizableInputProps<T>, ref: React.Ref<RNTextInput>) {
+  const { autoGrow = true, handleColor = '#9e9e9e', initialHeight, maxHeight, minHeight, numberOfLines, onChangeText, onContentSizeChange, onHeightChange, renderHandle, resizable = true, style, TextInputComponent, value: valueProp, ...rest } = props as ResizableInputProps<any>
 
   const InputComponent = (TextInputComponent ?? AutoPaperTextInput ?? RNTextInput) as any
-  const isPaper = InputComponent === AutoPaperTextInput || (AutoPaperTextInput !== null && TextInputComponent === AutoPaperTextInput)
-  const resolvedMode = isPaper ? (mode ?? 'outlined') : undefined
 
   const usesNaturalBaseline = typeof initialHeight !== 'number' && typeof minHeight !== 'number'
   const resolvedMaxHeight = useMemo(() => (typeof maxHeight === 'number' ? maxHeight : Number.POSITIVE_INFINITY), [maxHeight])
@@ -146,7 +143,7 @@ export const ResizableInput = forwardRef<RNTextInput, ResizableInputProps>((prop
   return (
     <View style={styles.container}>
       <View onLayout={handleLayout} style={[styles.inputWrapper, typeof height === 'number' ? { height } : null]}>
-        <InputComponent ref={ref} dense mode={resolvedMode} multiline numberOfLines={numberOfLines ?? 1} {...rest} value={value} onChangeText={handleChange} onContentSizeChange={handleContentResize} style={[styles.input, style]} />
+        <InputComponent ref={ref} dense multiline numberOfLines={numberOfLines ?? 1} {...rest} value={value} onChangeText={handleChange} onContentSizeChange={handleContentResize} style={[styles.input, style]} />
       </View>
       {resizable ? (
         <GestureDetector gesture={resizeGesture}>
@@ -155,7 +152,9 @@ export const ResizableInput = forwardRef<RNTextInput, ResizableInputProps>((prop
       ) : null}
     </View>
   )
-})
+}
+
+export const ResizableInput = React.forwardRef(ResizableInputInner) as (<T extends ComponentType<any> = typeof RNTextInput>(props: ResizableInputProps<T> & React.RefAttributes<RNTextInput>) => React.ReactElement | null) & { displayName?: string }
 
 ResizableInput.displayName = 'ResizableInput'
 
