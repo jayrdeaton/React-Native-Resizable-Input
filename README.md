@@ -72,7 +72,11 @@ All other props are forwarded to the underlying input component.
 
 ## Peer dependencies
 
-- `react >= 17.0.0`
-- `react-native >= 0.70.0`
+- `react >= 18.0.0`
+- `react-native >= 0.76.0`
 - `react-native-gesture-handler >= 2.0.0`
 - `react-native-reanimated >= 3.0.0`
+
+Optional:
+
+- `react-native-paper >= 5.0.0` — when installed, the input defaults to Paper's `TextInput` (unless you pass `TextInputComponent`); without it, falls back to React Native's `TextInput`
