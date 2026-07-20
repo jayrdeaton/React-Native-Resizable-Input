@@ -1,6 +1,6 @@
 {
   "name": "@rific/resizable-input",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Auto-growing, drag-resizable text input for React Native with optional react-native-paper support",
   "keywords": [
     "react-native",
