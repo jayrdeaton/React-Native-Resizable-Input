@@ -13,7 +13,7 @@ module.exports = {
       'ts-jest',
       {
         tsconfig: {
-          jsx: 'react',
+          jsx: 'react-jsx',
           module: 'CommonJS',
           moduleResolution: 'node',
           ignoreDeprecations: '5.0',
