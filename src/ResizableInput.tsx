@@ -4,10 +4,7 @@ import { LayoutChangeEvent, StyleSheet, TextInput as RNTextInput, View } from 'r
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { runOnJS, useSharedValue } from 'react-native-reanimated'
 
-let AutoPaperTextInput: ComponentType<any> | null = null
-try {
-  AutoPaperTextInput = require('react-native-paper').TextInput
-} catch {}
+import { getResizableInputConfig } from './ResizableInputConfig'
 
 export type ResizableInputProps<T extends ComponentType<any> = typeof RNTextInput> = {
   autoGrow?: boolean
@@ -29,7 +26,7 @@ const AUTO_GROW_DELTA = 2
 function ResizableInputInner<T extends ComponentType<any> = typeof RNTextInput>(props: ResizableInputProps<T>, ref: React.Ref<RNTextInput>) {
   const { autoGrow = true, handleColor = '#9e9e9e', initialHeight, maxHeight, minHeight, numberOfLines, onChangeText, onContentSizeChange, onHeightChange, renderHandle, resizable = true, style, TextInputComponent, value: valueProp, ...rest } = props as ResizableInputProps<any>
 
-  const InputComponent = (TextInputComponent ?? AutoPaperTextInput ?? RNTextInput) as any
+  const InputComponent = (TextInputComponent ?? getResizableInputConfig().TextInputComponent ?? RNTextInput) as any
 
   const usesNaturalBaseline = typeof initialHeight !== 'number' && typeof minHeight !== 'number'
   const resolvedMaxHeight = useMemo(() => (typeof maxHeight === 'number' ? maxHeight : Number.POSITIVE_INFINITY), [maxHeight])
