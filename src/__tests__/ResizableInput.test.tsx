@@ -2,6 +2,7 @@ import { render } from '@testing-library/react'
 import React from 'react'
 
 import { ResizableInput } from '../ResizableInput'
+import { configureResizableInput } from '../ResizableInputConfig'
 
 describe('ResizableInput', () => {
   it('renders without throwing', () => {
@@ -63,5 +64,15 @@ describe('ResizableInput', () => {
     expect(() => {
       render(<ResizableInput handleColor='#ff0000' />)
     }).not.toThrow()
+  })
+
+  it('prefers the per-instance TextInputComponent over the configured global default', () => {
+    const GlobalInput = () => <>global</>
+    const InstanceInput = () => <>instance</>
+    configureResizableInput({ TextInputComponent: GlobalInput })
+
+    const { container } = render(<ResizableInput TextInputComponent={InstanceInput} />)
+
+    expect(container.textContent).toBe('instance')
   })
 })

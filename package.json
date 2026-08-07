@@ -1,7 +1,7 @@
 {
   "name": "@rific/resizable-input",
   "version": "0.2.3",
-  "description": "Auto-growing, drag-resizable text input for React Native with optional react-native-paper support",
+  "description": "Auto-growing, drag-resizable text input for React Native, swap in react-native-paper's TextInput or any other input component via TextInputComponent",
   "keywords": [
     "react-native",
     "text-input",
@@ -27,7 +27,7 @@
   "type": "commonjs",
   "exports": {
     ".": {
-      "react-native": "./dist/index.js",
+      "react-native": "./dist/index.mjs",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
@@ -35,6 +35,7 @@
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
+  "react-native": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
@@ -76,7 +77,6 @@
     "react-dom": "^19.0.0",
     "react-native": "^0.85.3",
     "react-native-gesture-handler": "^2.31.2",
-    "react-native-paper": "^5.15.2",
     "react-native-reanimated": "^4.3.1",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
@@ -88,13 +88,7 @@
     "react": ">=18.0.0",
     "react-native": ">=0.76.0",
     "react-native-gesture-handler": ">=2.0.0",
-    "react-native-paper": ">=5.0.0",
     "react-native-reanimated": ">=3.0.0"
-  },
-  "peerDependenciesMeta": {
-    "react-native-paper": {
-      "optional": true
-    }
   },
   "publishConfig": {
     "access": "public"

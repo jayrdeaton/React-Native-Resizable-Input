@@ -42,6 +42,28 @@ import { TextInput as PaperInput } from 'react-native-paper'
 />
 ```
 
+If every `ResizableInput` in your app should default to the same component, configure it once instead of passing `TextInputComponent` at every call site:
+
+```tsx
+import { configureResizableInput } from '@rific/resizable-input'
+import { TextInput as PaperInput } from 'react-native-paper'
+
+configureResizableInput({ TextInputComponent: PaperInput })
+```
+
+Or mount `ResizableInputProvider` near your app root: it's a thin wrapper that just calls `configureResizableInput()` for you, for consistency with how the other `@rific` packages configure their own optional integrations:
+
+```tsx
+import { ResizableInputProvider } from '@rific/resizable-input'
+import { TextInput as PaperInput } from 'react-native-paper'
+
+<ResizableInputProvider TextInputComponent={PaperInput}>
+  {/* your app */}
+</ResizableInputProvider>
+```
+
+Either way, this is one-time setup, not reactive state: call it once, before your first `ResizableInput` renders. A per-instance `TextInputComponent` prop always overrides the configured default.
+
 ### Custom handle
 
 ```tsx
@@ -77,6 +99,4 @@ All other props are forwarded to the underlying input component.
 - `react-native-gesture-handler >= 2.0.0`
 - `react-native-reanimated >= 3.0.0`
 
-Optional:
-
-- `react-native-paper >= 5.0.0` — when installed, the input defaults to Paper's `TextInput` (unless you pass `TextInputComponent`); without it, falls back to React Native's `TextInput`
+No dependency on `react-native-paper` or any other input library: `TextInputComponent` (see above) is the only integration point, and it works with any component that accepts `value`/`onChangeText`. Without it, `ResizableInput` renders React Native's own `TextInput`.
