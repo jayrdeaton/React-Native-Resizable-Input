@@ -71,18 +71,44 @@ function ResizableInputInner<T extends ComponentType<any> = typeof RNTextInput>(
     [resolvedMaxHeight, resolvedMinHeight, usesNaturalBaseline]
   )
 
-  useEffect(() => setValue(valueProp ?? ''), [valueProp])
-
-  useEffect(() => {
-    setContentPadding(null)
-  }, [resolvedMinHeight])
-
-  useEffect(() => {
-    setHeight((current) => {
-      if (current === null) return current
-      return clampHeight(current, resolvedMinHeight, resolvedMaxHeight)
+  const resizeGesture = Gesture.Pan()
+    .onBegin(() => {
+      'worklet'
+      dragStartHeight.value = height ?? resolvedMinHeight
+      liveHeight.value = dragStartHeight.value
     })
-  }, [resolvedMinHeight, resolvedMaxHeight])
+    .onUpdate((event) => {
+      'worklet'
+      const candidate = dragStartHeight.value + event.translationY
+      const next = Math.max(resolvedMinHeight, Math.min(resolvedMaxHeight, candidate))
+      if (Math.abs(next - liveHeight.value) < 1) return
+      liveHeight.value = next
+      runOnJS(updateHeight)(next)
+    })
+    .onEnd((event) => {
+      'worklet'
+      const candidate = dragStartHeight.value + event.translationY
+      const next = Math.max(resolvedMinHeight, Math.min(resolvedMaxHeight, candidate))
+      runOnJS(updateHeight)(next)
+    })
+
+  const [prevValueProp, setPrevValueProp] = useState(valueProp)
+  if (valueProp !== prevValueProp) {
+    setPrevValueProp(valueProp)
+    setValue(valueProp ?? '')
+  }
+
+  const [prevResolvedMinHeightForPadding, setPrevResolvedMinHeightForPadding] = useState(resolvedMinHeight)
+  if (resolvedMinHeight !== prevResolvedMinHeightForPadding) {
+    setPrevResolvedMinHeightForPadding(resolvedMinHeight)
+    setContentPadding(null)
+  }
+
+  const [prevBounds, setPrevBounds] = useState({ resolvedMinHeight, resolvedMaxHeight })
+  if (prevBounds.resolvedMinHeight !== resolvedMinHeight || prevBounds.resolvedMaxHeight !== resolvedMaxHeight) {
+    setPrevBounds({ resolvedMinHeight, resolvedMaxHeight })
+    setHeight((current) => (current === null ? current : clampHeight(current, resolvedMinHeight, resolvedMaxHeight)))
+  }
 
   useEffect(() => {
     liveHeight.value = height ?? resolvedMinHeight
@@ -115,27 +141,6 @@ function ResizableInputInner<T extends ComponentType<any> = typeof RNTextInput>(
     },
     [autoGrow, contentPadding, height, onContentSizeChange, resolvedMaxHeight, resolvedMinHeight, usesNaturalBaseline]
   )
-
-  const resizeGesture = Gesture.Pan()
-    .onBegin(() => {
-      'worklet'
-      dragStartHeight.value = height ?? resolvedMinHeight
-      liveHeight.value = dragStartHeight.value
-    })
-    .onUpdate((event) => {
-      'worklet'
-      const candidate = dragStartHeight.value + event.translationY
-      const next = Math.max(resolvedMinHeight, Math.min(resolvedMaxHeight, candidate))
-      if (Math.abs(next - liveHeight.value) < 1) return
-      liveHeight.value = next
-      runOnJS(updateHeight)(next)
-    })
-    .onEnd((event) => {
-      'worklet'
-      const candidate = dragStartHeight.value + event.translationY
-      const next = Math.max(resolvedMinHeight, Math.min(resolvedMaxHeight, candidate))
-      runOnJS(updateHeight)(next)
-    })
 
   return (
     <View style={styles.container}>
