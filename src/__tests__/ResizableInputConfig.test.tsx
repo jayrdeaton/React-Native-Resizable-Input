@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react'
-import React from 'react'
 
 import { ResizableInput } from '../ResizableInput'
 import { configureResizableInput, getResizableInputConfig, ResizableInputProvider } from '../ResizableInputConfig'
