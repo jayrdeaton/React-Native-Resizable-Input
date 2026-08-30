@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
 
 const Animated = {
@@ -15,5 +14,5 @@ export const withTiming = (toValue: any, _config?: any, callback?: any) => {
   return toValue
 }
 export const withSpring = (x: any) => x
-export const interpolate = (value: any, _input: any, output: any) => output[0]
+export const interpolate = (_value: any, _input: any, output: any) => output[0]
 export const Extrapolation = { CLAMP: 'clamp' }
