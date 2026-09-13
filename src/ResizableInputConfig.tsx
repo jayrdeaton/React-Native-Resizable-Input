@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { createModuleConfig } from '@rific/core'
 import { type ComponentType, type ReactNode } from 'react'
 
 export type ResizableInputConfig = {
@@ -6,29 +7,14 @@ export type ResizableInputConfig = {
   TextInputComponent?: ComponentType<any>
 }
 
-let config: ResizableInputConfig = {}
+// @rific/core's createModuleConfig() supplies the module-level config singleton (configure/
+// getConfig/Provider) every @rific package wires up the same way - see its own doc comment for
+// why this is plain module state rather than React Context. The per-instance TextInputComponent
+// prop on <ResizableInput> always overrides this default.
+const resizableInputConfig = createModuleConfig<ResizableInputConfig>()
 
-// Plain module-level config rather than React Context: this is one-time app setup, not
-// per-render reactive state, so a Provider that has to exist just to thread a value through the
-// tree is more ceremony than the problem needs. Call this directly, or mount
-// <ResizableInputProvider> once near your app root (it just calls this for you). Not
-// reactive: calling it again after components have already rendered won't retroactively update
-// them, fine for one-time startup config, not for runtime toggling. The per-instance
-// `TextInputComponent` prop on <ResizableInput> always overrides this default.
-export const configureResizableInput = (next: ResizableInputConfig) => {
-  config = { ...config, ...next }
-}
-
-export const getResizableInputConfig = (): ResizableInputConfig => config
+export const configureResizableInput = resizableInputConfig.configure
+export const getResizableInputConfig = resizableInputConfig.getConfig
+export const ResizableInputProvider = resizableInputConfig.Provider
 
 export type ResizableInputProviderProps = ResizableInputConfig & { children: ReactNode }
-
-// Thin wrapper around configureResizableInput() for consumers who'd rather mount a Provider
-// than call a setup function directly: every @rific package wires up the same way this way.
-// Calls configureResizableInput() synchronously during render (not in an effect), so the
-// config is already set by the time any descendant <ResizableInput> renders. Effects run
-// bottom-up after children have already rendered once, which would be one render too late here.
-export const ResizableInputProvider = ({ children, TextInputComponent }: ResizableInputProviderProps) => {
-  configureResizableInput({ TextInputComponent })
-  return <>{children}</>
-}
