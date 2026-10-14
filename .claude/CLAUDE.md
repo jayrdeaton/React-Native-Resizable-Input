@@ -60,11 +60,11 @@ src/
 
 From `src/index.ts`:
 
-- `ResizableInput`, `ResizableInputProps` (type) — the component
-- `configureResizableInput` — one-time global config setter (`{ TextInputComponent? }`); not reactive, call before first render
-- `getResizableInputConfig` — reads the current module-level config
-- `ResizableInputConfig` (type) — config shape
-- `ResizableInputProvider`, `ResizableInputProviderProps` (type) — thin wrapper that calls `configureResizableInput()` synchronously during render
+- `ResizableInput`, `ResizableInputProps` (type) - the component
+- `configureResizableInput` - one-time global config setter (`{ TextInputComponent? }`); not reactive, call before first render
+- `getResizableInputConfig` - reads the current module-level config
+- `ResizableInputConfig` (type) - config shape
+- `ResizableInputProvider`, `ResizableInputProviderProps` (type) - thin wrapper that calls `configureResizableInput()` synchronously during render
 
 ## Peer Dependencies
 
@@ -79,11 +79,11 @@ From `src/index.ts`:
 - Framework: Jest (`@infinitetoken/jest-config/react-native`), jsdom environment
 - Mocks in `src/__mocks__/` for `react-native`, `react-native-gesture-handler`, `react-native-reanimated`
 - 14 tests across 2 suites: `ResizableInput.test.tsx`, `ResizableInputConfig.test.tsx`
-- `coverageThreshold` is not overridden in `jest.config.cjs` — coverage is 100/100/100/100 across both `ResizableInput.tsx` and `ResizableInputConfig.tsx`, comfortably clearing the fleet default (70/70/70/70).
+- `coverageThreshold` is not overridden in `jest.config.cjs` - coverage is 100/100/100/100 across both `ResizableInput.tsx` and `ResizableInputConfig.tsx`, comfortably clearing the fleet default (70/70/70/70).
 
 ## Code Style
 
-Enforced by ESLint + Prettier — run `npm run lint` before finishing any task. `eslint.config.cjs` is a bare `module.exports = require('@infinitetoken/eslint-config/react-native')`, no local overrides.
+Enforced by ESLint + Prettier - run `npm run lint` before finishing any task. `eslint.config.cjs` is a bare `module.exports = require('@infinitetoken/eslint-config/react-native')`, no local overrides.
 
 **Prettier config:**
 - Single quotes, JSX single quotes
@@ -92,12 +92,12 @@ Enforced by ESLint + Prettier — run `npm run lint` before finishing any task. 
 - Print width: 1000 (effectively disabled)
 
 **ESLint rules (warnings unless noted):**
-- `simple-import-sort` — imports and exports must be sorted
-- `react-native/no-inline-styles` — no inline style objects
-- `react-native/no-unused-styles` — no unused StyleSheet entries
-- `no-console` — no console statements
-- `@typescript-eslint/no-unused-vars` — `varsIgnorePattern`/`argsIgnorePattern`/`caughtErrorsIgnorePattern: '^_'` (unused vars/args/caught-errors prefixed `_` are allowed)
-- `react-hooks/rules-of-hooks` — error, not a warning
+- `simple-import-sort` - imports and exports must be sorted
+- `react-native/no-inline-styles` - no inline style objects
+- `react-native/no-unused-styles` - no unused StyleSheet entries
+- `no-console` - no console statements
+- `@typescript-eslint/no-unused-vars` - `varsIgnorePattern`/`argsIgnorePattern`/`caughtErrorsIgnorePattern: '^_'` (unused vars/args/caught-errors prefixed `_` are allowed)
+- `react-hooks/rules-of-hooks` - error, not a warning
 - `react-hooks/exhaustive-deps`, `react-hooks/refs`, `react-hooks/immutability`, `react-hooks/preserve-manual-memoization`, `react-hooks/set-state-in-effect`
-- `package-json/order-properties`, `package-json/sort-collections` — on `package.json` itself
-- `@typescript-eslint/no-explicit-any` — off in `__tests__/`/`__mocks__/` files. Still active in `ResizableInput.tsx` and `ResizableInputConfig.tsx` themselves, where a file-level `/* eslint-disable @typescript-eslint/no-explicit-any */` is load-bearing (both use `any` to stay generic over an arbitrary `TextInputComponent`).
+- `package-json/order-properties`, `package-json/sort-collections` - on `package.json` itself
+- `@typescript-eslint/no-explicit-any` - off in `__tests__/`/`__mocks__/` files. Still active in `ResizableInput.tsx` and `ResizableInputConfig.tsx` themselves, where a file-level `/* eslint-disable @typescript-eslint/no-explicit-any */` is load-bearing (both use `any` to stay generic over an arbitrary `TextInputComponent`).
