@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { callWorkletCallback, useWorkletCallback } from '@rific/core'
 import React, { ComponentProps, ComponentType, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { LayoutChangeEvent, StyleSheet, TextInput as RNTextInput, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
@@ -71,6 +72,9 @@ function ResizableInputInner<T extends ComponentType<any> = typeof RNTextInput>(
     [resolvedMaxHeight, resolvedMinHeight, usesNaturalBaseline]
   )
 
+  // The drag worklets call updateHeight through callWorkletCallback by key, never directly: react-native-worklets
+  // holds a runOnJS target natively for as long as the worklet lives, which pinned the whole input.
+  const updateHeightKey = useWorkletCallback(updateHeight)
   const resizeGesture = Gesture.Pan()
     .onBegin(() => {
       'worklet'
@@ -83,13 +87,13 @@ function ResizableInputInner<T extends ComponentType<any> = typeof RNTextInput>(
       const next = Math.max(resolvedMinHeight, Math.min(resolvedMaxHeight, candidate))
       if (Math.abs(next - liveHeight.value) < 1) return
       liveHeight.value = next
-      runOnJS(updateHeight)(next)
+      runOnJS(callWorkletCallback)(updateHeightKey, next)
     })
     .onEnd((event) => {
       'worklet'
       const candidate = dragStartHeight.value + event.translationY
       const next = Math.max(resolvedMinHeight, Math.min(resolvedMaxHeight, candidate))
-      runOnJS(updateHeight)(next)
+      runOnJS(callWorkletCallback)(updateHeightKey, next)
     })
 
   const [prevValueProp, setPrevValueProp] = useState(valueProp)

@@ -2,6 +2,8 @@
 
 Auto-growing, drag-resizable multiline text input for React Native.
 
+**[Live demo](https://rific.jaydeaton.com/demos/resizable-input)**
+
 ## Installation
 
 ```sh
