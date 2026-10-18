@@ -8,7 +8,6 @@ export default Animated
 
 export const useSharedValue = (init: any) => ({ value: init })
 export const useAnimatedStyle = (fn: () => any) => fn()
-export const runOnJS = (fn: any) => fn
 export const withTiming = (toValue: any, _config?: any, callback?: any) => {
   callback?.()
   return toValue

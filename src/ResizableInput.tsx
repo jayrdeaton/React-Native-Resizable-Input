@@ -3,7 +3,8 @@ import { callWorkletCallback, useWorkletCallback } from '@rific/core'
 import React, { ComponentProps, ComponentType, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { LayoutChangeEvent, StyleSheet, TextInput as RNTextInput, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
-import { runOnJS, useSharedValue } from 'react-native-reanimated'
+import { useSharedValue } from 'react-native-reanimated'
+import { scheduleOnRN } from 'react-native-worklets'
 
 import { getResizableInputConfig } from './ResizableInputConfig'
 
@@ -87,13 +88,13 @@ function ResizableInputInner<T extends ComponentType<any> = typeof RNTextInput>(
       const next = Math.max(resolvedMinHeight, Math.min(resolvedMaxHeight, candidate))
       if (Math.abs(next - liveHeight.value) < 1) return
       liveHeight.value = next
-      runOnJS(callWorkletCallback)(updateHeightKey, next)
+      scheduleOnRN(callWorkletCallback, updateHeightKey, next)
     })
     .onEnd((event) => {
       'worklet'
       const candidate = dragStartHeight.value + event.translationY
       const next = Math.max(resolvedMinHeight, Math.min(resolvedMaxHeight, candidate))
-      runOnJS(callWorkletCallback)(updateHeightKey, next)
+      scheduleOnRN(callWorkletCallback, updateHeightKey, next)
     })
 
   const [prevValueProp, setPrevValueProp] = useState(valueProp)
