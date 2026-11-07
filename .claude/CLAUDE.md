@@ -43,7 +43,8 @@ src/
   __mocks__/
     react-native.ts                  - jest mock: real <div>/<textarea> DOM nodes for View/TextInput so onLayout and onContentSizeChange are reachable from tests; Text/Pressable/TouchableOpacity + StyleSheet/Platform stubs
     react-native-gesture-handler.ts  - jest mock: GestureHandlerRootView passthrough; GestureDetector stashes its `gesture` object on the child DOM node via a cloned ref so tests can reach it; Gesture.Pan() builds a chainable onBegin/onUpdate/onEnd object that doubles as the direct invoker a test calls to fire those callbacks synchronously
-    react-native-reanimated.ts       - jest mock: useSharedValue/useAnimatedStyle/runOnJS/withTiming/withSpring/interpolate/Extrapolation stubs
+    react-native-reanimated.ts       - jest mock: useSharedValue/useAnimatedStyle/withTiming/withSpring/interpolate/Extrapolation stubs
+    react-native-worklets.ts         - jest mock: scheduleOnRN calls straight through, so drag callbacks run synchronously
   __tests__/
     ResizableInput.test.tsx
     ResizableInputConfig.test.tsx
@@ -53,7 +54,7 @@ src/
 
 - **Baseline height.** If `minHeight` is passed, that's the floor. Otherwise the component measures its own natural single-line height on first layout (`handleLayout` → `naturalMinHeight`) and uses that. `resolvedMaxHeight` defaults to `Infinity` when `maxHeight` is omitted.
 - **Auto-grow** (`autoGrow`, default `true`) is driven by the input's `onContentSizeChange`. `handleContentResize` infers the wrapper's own padding from the gap between current height and reported content height the first time it fires, then reuses that inferred padding to compute each next height, clamped to `[resolvedMinHeight, resolvedMaxHeight]`. When no explicit `initialHeight`/`minHeight` was given (`usesNaturalBaseline`) and the computed height lands within `AUTO_GROW_DELTA` (2px) of the natural baseline, height resets to `null` so the wrapper falls back to natural sizing instead of pinning a redundant explicit height.
-- **Manual resize** (`resizable`, default `true`) is a `Gesture.Pan()` on the handle. `onUpdate` skips updates under a 1px delta, clamps the candidate height to the same `[resolvedMinHeight, resolvedMaxHeight]` bounds, and calls `updateHeight` via `runOnJS`.
+- **Manual resize** (`resizable`, default `true`) is a `Gesture.Pan()` on the handle. `onUpdate` skips updates under a 1px delta, clamps the candidate height to the same `[resolvedMinHeight, resolvedMaxHeight]` bounds, and calls `updateHeight` via `scheduleOnRN` and `@rific/core`'s `callWorkletCallback`.
 - **`TextInputComponent` resolution order:** per-instance prop → `configureResizableInput()` global default → React Native's own `TextInput`.
 
 ## Public API
@@ -68,17 +69,18 @@ From `src/index.ts`:
 
 ## Peer Dependencies
 
+- `@rific/core` >=0.5.0 - `useWorkletCallback`/`callWorkletCallback`, so the drag worklets call back into `updateHeight` by key instead of pinning the component
 - `react` >=19.0.0
 - `react-native` >=0.76.0
-- `react-native-gesture-handler` >=2.0.0 <3.0.0
+- `react-native-gesture-handler` >=2.0.0 <4.0.0 - 2.x or 3.x (Expo SDK 58 ships 3.3); still the deprecated `Gesture.Pan()` builder, see TODO.md
 - `react-native-reanimated` >=4.0.0
-- `react-native-worklets` 0.10.x
+- `react-native-worklets` >=0.5.0 - `scheduleOnRN` (developed against 0.13, the pair Reanimated 4.7 needs)
 
 ## Testing
 
 - Framework: Jest (`@infinitetoken/jest-config/react-native`), jsdom environment
-- Mocks in `src/__mocks__/` for `react-native`, `react-native-gesture-handler`, `react-native-reanimated`
-- 14 tests across 2 suites: `ResizableInput.test.tsx`, `ResizableInputConfig.test.tsx`
+- Mocks in `src/__mocks__/` for `react-native`, `react-native-gesture-handler`, `react-native-reanimated` (all three mapped in `jest.config.cjs`) and `react-native-worklets` (picked up as a node-module manual mock, since Jest's `roots` is `src`)
+- 28 tests across 2 suites: `ResizableInput.test.tsx`, `ResizableInputConfig.test.tsx`
 - `coverageThreshold` is not overridden in `jest.config.cjs` - coverage is 100/100/100/100 across both `ResizableInput.tsx` and `ResizableInputConfig.tsx`, comfortably clearing the fleet default (70/70/70/70).
 
 ## Code Style

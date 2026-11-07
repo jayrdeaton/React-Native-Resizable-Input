@@ -7,7 +7,7 @@ Auto-growing, drag-resizable multiline text input for React Native.
 ## Installation
 
 ```sh
-npm install @rific/resizable-input react-native-gesture-handler react-native-reanimated
+npm install @rific/resizable-input @rific/core react-native-gesture-handler react-native-reanimated react-native-worklets
 ```
 
 ## Usage
@@ -96,9 +96,11 @@ All other props are forwarded to the underlying input component.
 
 ## Peer dependencies
 
-- `react >= 18.0.0`
+- `@rific/core >= 0.5.0`
+- `react >= 19.0.0`
 - `react-native >= 0.76.0`
-- `react-native-gesture-handler >= 2.0.0`
-- `react-native-reanimated >= 3.0.0`
+- `react-native-gesture-handler >= 2.0.0 < 4.0.0` (2.x or 3.x, so Expo SDK 58 apps on 3.3 can use it)
+- `react-native-reanimated >= 4.0.0`
+- `react-native-worklets >= 0.5.0`
 
 No dependency on `react-native-paper` or any other input library: `TextInputComponent` (see above) is the only integration point, and it works with any component that accepts `value`/`onChangeText`. Without it, `ResizableInput` renders React Native's own `TextInput`.
