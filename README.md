@@ -64,7 +64,7 @@ import { TextInput as PaperInput } from 'react-native-paper'
 </ResizableInputProvider>
 ```
 
-Either way, this is one-time setup, not reactive state: call it once, before your first `ResizableInput` renders. A per-instance `TextInputComponent` prop always overrides the configured default.
+Either way, this is one-time setup, not reactive state: call it once, before your first `ResizableInput` renders. A per-instance `TextInputComponent` prop always overrides the configured default. `getResizableInputConfig()` returns what was configured (a `ResizableInputConfig`, `{ TextInputComponent? }`).
 
 ### Custom handle
 
