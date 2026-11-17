@@ -104,3 +104,7 @@ All other props are forwarded to the underlying input component.
 - `react-native-worklets >= 0.5.0`
 
 No dependency on `react-native-paper` or any other input library: `TextInputComponent` (see above) is the only integration point, and it works with any component that accepts `value`/`onChangeText`. Without it, `ResizableInput` renders React Native's own `TextInput`.
+
+---
+
+Made by [Infinite Token](https://www.infinitetoken.com), the team behind [Lumber](https://lumber.infinitetoken.com): end-to-end encrypted logging.
